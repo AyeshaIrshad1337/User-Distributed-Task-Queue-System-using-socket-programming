@@ -18,6 +18,7 @@ lock = threading.Lock()
 
 # Function to handle worker connections
 def handle_worker_connection(worker_socket, worker_id):
+    print("enter in this function")
     while True:
         try:
             # Get a task from the task queue
