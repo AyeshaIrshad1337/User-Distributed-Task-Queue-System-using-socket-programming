@@ -12,10 +12,10 @@ def start_worker():
         # Receive a task from the server
         task_data = worker_socket.recv(4096).decode()
         task = json.loads(task_data)
-
+        print(f"Received task: {task}")
         # Process the task and get the result
         result = process_task(task)
-
+        print(f"Result for task {task['task_id']}: {result}")
         # Send the result back to the server
         worker_socket.sendall(json.dumps(result).encode())
 
@@ -31,7 +31,7 @@ def process_task(task):
 
         # Perform matrix multiplication on the specified rows
         partial_result = np.dot(matrix_a[rows_to_process], matrix_b)
-
+        print(f"Partial result for task {task['task_id']}: {partial_result}")
         # Convert partial result to list and return
         return {
             "status": "success",
