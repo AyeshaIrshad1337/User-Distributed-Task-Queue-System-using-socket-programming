@@ -30,7 +30,6 @@ def main():
         task_args = map(eval, task_details[1:])  # Convert arguments from strings to appropriate types
 
         print(f"Received task: {task}")
-        time.sleep(60)
         # Use execute_task to dynamically run tasks
         result = execute_task(task_type, *task_args)
         print(f"Processed result: {result}")

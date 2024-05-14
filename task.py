@@ -1,5 +1,8 @@
 import math
-import time
+import os
+import requests
+from bs4 import BeautifulSoup
+
 def compute_factorial(n):
     """Compute the factorial of n."""
     return math.factorial(n)
@@ -28,6 +31,46 @@ def divide(a, b):
         raise ValueError("Cannot divide by zero.")
     return a / b
 
+def sanitize_filename(name):
+    """Sanitize filename to remove invalid characters."""
+    return "".join(c for c in name if c not in "\\/:*?\"<>|")
+
+def scrape_website(url):
+    """Scrape the entire HTML of a website and save it to a file."""
+    # Sanitize the filename derived from the URL to ensure it's valid for Windows filesystems.
+    filename = sanitize_filename(url.split('//')[-1].replace('/', '_') + '.html')
+    filepath = os.path.join('scraped_websites', filename)  # Specify a directory for scraped files
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)  # Ensure the directory exists
+
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raises HTTPError for bad responses
+        with open(filepath, 'w', encoding='utf-8') as file:
+            file.write(response.text)
+        return f"Webpage saved as {filepath}"
+    except requests.RequestException as e:
+        return f"Request error: {e}"
+    except Exception as e:
+        return f"Scraping error: {e}"
+def scrape_website_content(url):
+    """Scrape specific content from a website."""
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Check that the request was successful
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        # Attempt to find the main article content by common tags or classes
+        content = soup.find('article') or soup.find('div', class_='main-content')
+        if content:
+            text_content = content.get_text(separator='\n', strip=True)
+            return text_content
+        else:
+            return "No relevant content found on the page."
+
+    except requests.RequestException as e:
+        return f"Request error: {e}"
+    except Exception as e:
+        return f"Scraping error: {e}"
 def execute_task(task_type, *args):
     if task_type == 'factorial' and len(args) == 1:
         return compute_factorial(args[0])
@@ -39,6 +82,10 @@ def execute_task(task_type, *args):
         return multiply(*args)
     elif task_type == 'divide' and len(args) == 2:
         return divide(args[0], args[1])
+    elif task_type == 'scrape_website' and len(args) == 1:
+        return scrape_website(args[0])
+    elif task_type == 'scrape_website_content' and len(args) == 1:
+        return scrape_website_content(args[0])
     else:
         return "Unknown task or incorrect parameters"
 
@@ -49,3 +96,6 @@ if __name__ == "__main__":
     print(execute_task('subtract', 10, 5, 1))  # Subtract 1 from 5 from 10
     print(execute_task('multiply', 2, 3, 4))  # Multiply 2, 3, and 4
     print(execute_task('divide', 20, 4))  # Divide 20 by 4
+    print(execute_task('scrape_website', 'https://www.freecodecamp.org/news/pass-the-github-actions-certification-exam/?ref=dailydev'))
+    print(execute_task('scrape_website_content', 'https://www.freecodecamp.org/news/pass-the-github-actions-certification-exam/?ref=dailydev'))
+    

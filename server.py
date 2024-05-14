@@ -11,9 +11,11 @@ worker_id_counter = 0
 def parse_task(task_string):
     parts = task_string.split('|')
     task_type = parts[0]
-    args = map(int, parts[1:])  # Convert args to integers
+    if task_type in ['add', 'subtract', 'multiply', 'divide']:
+        args = map(int, parts[1:])  # Convert args to integers for arithmetic tasks
+    else:
+        args = parts[1:]  # Keep args as strings for tasks like web scraping
     return task_type, list(args)
-
 def client_handler(conn, addr):
     while True:
         try:
