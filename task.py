@@ -1,36 +1,51 @@
 import math
-import json
-import subprocess
+import time
+def compute_factorial(n):
+    """Compute the factorial of n."""
+    return math.factorial(n)
 
-def compute_factorial():
-    return math.factorial(100)
+def add(*args):
+    """Add any number of values."""
+    return sum(args)
 
-def run_simulation():
-    with open("params.json", "r") as file:
-        params = json.load(file)
-    # Assuming the simulation function is already defined or imported
-    # For example:
-    # result = simulate(params['param1'], params['param2'])
-    # return result
-    return f"Simulation with params {params} completed"  # Placeholder
+def subtract(a, b, *args):
+    """Subtract two or more numbers, starting with the first two."""
+    result = a - b
+    for arg in args:
+        result -= arg
+    return result
 
-def execute_script():
-    # This assumes that `calculate_interest.py` takes a command line argument for the filename
-    result = subprocess.run(['python', 'calculate_interest.py', 'interest_data.csv'], capture_output=True, text=True)
-    return result.stdout
+def multiply(*args):
+    """Multiply any number of values."""
+    result = 1
+    for arg in args:
+        result *= arg
+    return result
 
-def execute_task(task_type):
-    if task_type == 'factorial':
-        return compute_factorial()
-    elif task_type == 'simulation':
-        return run_simulation()
-    elif task_type == 'interest_calculation':
-        return execute_script()
+def divide(a, b):
+    """Divide the first number by the second. Raises an error if dividing by zero."""
+    if b == 0:
+        raise ValueError("Cannot divide by zero.")
+    return a / b
+
+def execute_task(task_type, *args):
+    if task_type == 'factorial' and len(args) == 1:
+        return compute_factorial(args[0])
+    elif task_type == 'add':
+        return add(*args)
+    elif task_type == 'subtract':
+        return subtract(*args)
+    elif task_type == 'multiply':
+        return multiply(*args)
+    elif task_type == 'divide' and len(args) == 2:
+        return divide(args[0], args[1])
     else:
-        return "Unknown task"
+        return "Unknown task or incorrect parameters"
 
 if __name__ == "__main__":
     # Example usage
-    print(execute_task('factorial'))
-    print(execute_task('simulation'))
-    print(execute_task('interest_calculation'))
+    print(execute_task('factorial', 5))  # Calculate factorial of 5
+    print(execute_task('add', 1, 2, 3))  # Add 1, 2, and 3
+    print(execute_task('subtract', 10, 5, 1))  # Subtract 1 from 5 from 10
+    print(execute_task('multiply', 2, 3, 4))  # Multiply 2, 3, and 4
+    print(execute_task('divide', 20, 4))  # Divide 20 by 4

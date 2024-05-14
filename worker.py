@@ -16,19 +16,25 @@ def main():
             last_heartbeat = time.time()
 
         try:
-            worker.settimeout(1)
+            worker.settimeout(1)  # Set timeout for socket
             task = worker.recv(1024).decode()
         except socket.timeout:
-            continue
+            continue  # Handle timeout by continuing the loop
 
         if task == "No task":
             print("No new tasks available, waiting...")
             continue
-        
+
+        task_details = task.split('|')
+        task_type = task_details[0]
+        task_args = map(eval, task_details[1:])  # Convert arguments from strings to appropriate types
+
         print(f"Received task: {task}")
+        time.sleep(60)
         # Use execute_task to dynamically run tasks
-        result = execute_task(task)
+        result = execute_task(task_type, *task_args)
         print(f"Processed result: {result}")
+        
         worker.sendall(f"Completed task: {task}. Result: {result}".encode())
 
 if __name__ == "__main__":
