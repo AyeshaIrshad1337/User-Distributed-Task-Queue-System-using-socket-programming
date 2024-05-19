@@ -1,7 +1,5 @@
-# User-Distributed-Task-Queue-System-using-socket-programming
-"""
+# User-Distributed-Task-Queue-System-using-socket-programming  
 This project aims to create a task distribution system where a single client can submit tasks and the server will automatically distribute the tasks to workers. The goal is to efficiently allocate tasks and ensure timely completion of work. This system will help streamline the task management process and improve overall productivity.
-"""
 
 
 ## Prerequisites
